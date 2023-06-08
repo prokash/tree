@@ -102,6 +102,15 @@ node * min_node ( node * root)
     }
     return min;
 }
+
+int height ( node * root)
+{
+    if ( root == nullptr) return 0;
+    int lh = height( root->left) + 1;
+    int rh = height (root->left) + 1;
+
+    return  lh > rh ? lh : rh;
+}
 // -- predecessor of a node is the max of its left subtree
 
 node * predecessor( node * anode)
@@ -115,6 +124,7 @@ node * successor ( node* anode)
     assert(anode);
     return min_node(anode->right);
 }
+
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
@@ -131,6 +141,10 @@ int main() {
 
     node *next = successor(root );
     std::cout << "successor of = " << root->val << " is = " << next->val << std::endl;
+
+    //-height
+    std::cout << "height = " << height(root) << std::endl;
+
     return 0;
 
 }
