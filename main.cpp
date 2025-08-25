@@ -1,14 +1,13 @@
 #include <iostream>
 #include <stdlib.h>
-
-
-typedef struct _node {
-    int val;
-    struct _node * parent;
-    struct _node * left;
-    struct _node * right;
-}node;
-
+#include "tree.h"
+#include "diameter.h"
+#include "problems.h"
+#include "BST.h"
+#include "bfs.h"
+#include "iterativeBst.h"
+#include "Inordertree.h"
+#include "Algotree.h"
 node * BuildNode ( int val)
 {
     node * x = (node*) malloc ( sizeof (struct _node) );
@@ -38,6 +37,7 @@ node * BuildRight ( node * root, int i)
     return root;
 }
 
+// -- Building a BST
 node * BuildTreeRecursive ( node * root, int key) {
     if (root == nullptr) {
         root = (node *) malloc(sizeof(struct _node));
@@ -56,7 +56,9 @@ node * BuildTreeRecursive ( node * root, int key) {
 node *  BuildTree ( node * root)
 {
 
-    int A[] = { 5, 2, 1 , 3, 4, 8, 7, 6, 11, 72, 31, 54, 68 };
+//    int A[] = { 5, 2, 1 , 3, 4, 8, 7, 6, 11, 72, 31, 54, 68 };
+    int A[] = { 5, 2, 1 , 3, 4, 8}; //, 7, 6, 11, 72, 31, 54, 68 };
+
     int nb_nodes = sizeof ( A ) / sizeof (A[0]);
 
     root = BuildTreeRecursive(nullptr, A[0]);
@@ -69,6 +71,7 @@ node *  BuildTree ( node * root)
     return root;
 }
 
+//-Inorder visit => increasing order
 void visit ( node * root)
 {
     if ( !root) return;
@@ -77,74 +80,84 @@ void visit ( node * root)
     visit (root->right);
 }
 
-// - recursive
-node * max_node ( node * root)
+void print_tree ( node * root)
 {
-    node *max = nullptr;
-    if (root == nullptr) {
-        return nullptr;
-    }else {
-        //max = root;
-        node * current = max_node ( root->right);
-        (current) ? max = current : max = root;
-    }
-    return max;
-}
-// - recursive
-node * min_node ( node * root)
-{
-    node * min = nullptr;
-    if (root == nullptr) {
-        return nullptr;
-    }else {
-        node * current = min_node ( root->left);
-        (current) ? min = current : min = root;
-    }
-    return min;
+    showtree(root, 0);
+
 }
 
-int height ( node * root)
+/* PostOrder, free left, free right. free root */
+void FreeTree ( node * root)
 {
-    if ( root == nullptr) return 0;
-    int lh = height( root->left) + 1;
-    int rh = height (root->left) + 1;
+    if (root == nullptr) return;
 
-    return  lh > rh ? lh : rh;
+    FreeTree(root->left);
+    FreeTree(root->right);
+    free(root);
+    root = nullptr;
 }
-// -- predecessor of a node is the max of its left subtree
-
-node * predecessor( node * anode)
+node* BuildTreeNvisit( node* root)
 {
-    assert (anode);
-    return max_node(anode->left);
-}
-// -- successor of a node is the min of its right subtree
-node * successor ( node* anode)
-{
-    assert(anode);
-    return min_node(anode->right);
-}
-
-
-int main() {
-    std::cout << "Hello, World!" << std::endl;
-    node *root = BuildTree(root);
+    root = BuildTree(root);
     // - visit tree
     visit(root);
+    print_tree(root);
+    return root;
+}
+
+void AlgosMinMax ( node* root)
+{
+    // -- algos
     node* max = max_node(root);
     std::cout << "max =" << max->val << std::endl;
     node* min = min_node(root);
     std::cout << "min =" << min->val << std::endl;
+}
 
+void predecessor_successor ( node* root)
+{
     node *previous = predecessor(root);
     std::cout <<"predecessor of = " << root->val << " is= " << previous->val << std::endl;
-
     node *next = successor(root );
     std::cout << "successor of = " << root->val << " is = " << next->val << std::endl;
+}
 
+void height_diameter ( node * root)
+{
     //-height
     std::cout << "height = " << height(root) << std::endl;
 
+    //- diameter
+    std::cout << "diameter- " <<tree_diameter(root) << std::endl;
+}
+
+void test_iterative()
+{
+     iterative_main();
+}
+// -- tests for the algorithms ...
+int main() {
+    std::cout << "Hello, Trees!" << std::endl;
+
+    node * root = nullptr;
+
+    std::cout << "BuildTreeNvisit()" << std::endl;
+    root = BuildTreeNvisit(root);
+   FreeTree(root);
+
+    GoodNodesMain( );
+    std::cout << "Hello, World!" << std::endl;
+   // root = nullptr;
+
+    //iterative
+    test_iterative();
+    //- IsBST
+    BST_main();
+
+
+    //
+    root = BuildTreeNvisit(root);
+    Algotree_main(root);
     return 0;
 
 }
